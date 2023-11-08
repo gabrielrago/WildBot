@@ -17,7 +17,7 @@ $(document).ready(function () {
     // Function to display the welcome message once
     function displayWelcomeMessage() {
         if (!welcomeMessageShown) {
-            const welcomeText = "Hello, I am WildBot, your friendly virtual assistant. How can I assist you today? Whether you have questions, need information, or just want to chat, I'm here to help. Just type your query or request, and I'll do my best to provide you with the information and assistance you need.";
+            const welcomeText = "Hello, I am WildBot, your friendly virtual assistant. How can I assist you today? Whether you have questions, need information, I'm here to help. Just type your query or request, and I'll do my best to provide you with the information and assistance you need.";
             displayBotMessage(welcomeText); // This function will append and also save to local storage
             welcomeMessageShown = true;
             localStorage.setItem('welcomeMessageShown', 'true');
@@ -43,13 +43,23 @@ $(document).ready(function () {
                 scrollToBottom();
             });
             displayWelcomeMessage();
+            $('.chatbot-plugin').fadeOut("medium"); // Hide the chatbot-plugin div (including the icon) when the chatpane is shown
         } else {
-            chatpane.fadeOut("medium");
+            chatpane.fadeOut("medium", () => {
+                $('.chatbot-plugin').fadeIn("medium"); // Show the chatbot-plugin div when the chatpane is closed
+            });
         }
     }
 
-    chatbotIcon.click(toggleChatpane);
-    chatpaneHeader.click(toggleChatpane);
+    chatbotIcon.click(function() {
+        toggleChatpane();
+        // Do not hide the icon here as it's already handled in the toggleChatpane function
+    });
+
+    chatpaneHeader.click(function() {
+        toggleChatpane();
+        // The chatbot icon will reappear when the chatpane is closed, as handled in the toggleChatpane function
+    });
 
     // Function to display user messages in chatpane
     function displayUserMessage(message) {
