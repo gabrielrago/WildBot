@@ -2,7 +2,7 @@ import requests
 import schedule
 import time
 from datetime import datetime
-from llama_index import Document, GPTVectorStoreIndex  
+from llama_index import Document 
 
 # Configuration for Facebook
 PAGE_ID = '106180925472561'  # Replace with your page's ID
@@ -30,9 +30,8 @@ index = None  # Declare index here to ensure it's in the global scope
 
 def job():
     global LAST_TIMESTAMP
-    global index  # Refer to the index declared outside of the function
-    posts = get_facebook_posts()
     documents = []  # This will store Document objects
+    posts = get_facebook_posts()
 
     for post in posts:
         created_time_str = post.get("created_time", "")
@@ -42,23 +41,25 @@ def job():
             post_id = post["id"]
             post_message = post.get("message", "").strip()
 
+            # Convert datetime to string in ISO format
+            created_time_iso = created_time.isoformat()
+
             # Create a Document object for each post
-            # Assuming the Document class requires keyword arguments for initialization
-            document = Document(text=post_message, doc_id=post_id, extra_info={'date': created_time})
+            document = Document(text=post_message, doc_id=post_id, extra_info={'date': created_time_iso})
             documents.append(document)
 
-        # Initialize the index if it's the first run
-        if index is None and documents:
-            index = GPTVectorStoreIndex(documents)
-        else:
-            # Update the existing index with the new documents
-            for document in documents:
-                index.add_document(document)
-                
-        # Update LAST_TIMESTAMP with the timestamp of the latest post processed
-        if posts:
-            latest_time_str = posts[0].get("created_time", "")
-            LAST_TIMESTAMP = datetime.strptime(latest_time_str, '%Y-%m-%dT%H:%M:%S+0000')
+    # Update LAST_TIMESTAMP with the timestamp of the latest post processed
+    if posts:
+        latest_time_str = posts[0].get("created_time", "")
+        LAST_TIMESTAMP = datetime.strptime(latest_time_str, '%Y-%m-%dT%H:%M:%S+0000')
+
+    # Print each post in a beautified output
+    for doc in documents:
+        print(f"Document ID: {doc.doc_id}")
+        print(f"Date: {doc.extra_info['date']}")
+        print("Text:")
+        print(doc.text)
+        print("\n" + "="*80 + "\n")  # Separator for readability
                         
     if __name__ == '__main__':
         job()
