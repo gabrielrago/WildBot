@@ -1,7 +1,7 @@
 # WildBot
 
-pip install requests schedule Flask
-pip install llama_index
+#### pip install requests schedule Flask
+#### pip install llama_index
 
 To run the frontend server use:
 ## python -m http.server
