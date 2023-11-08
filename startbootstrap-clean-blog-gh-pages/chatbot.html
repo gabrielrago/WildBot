@@ -1,0 +1,38 @@
+<!-- Chatbot Button -->
+<div class="chatbot-plugin" id="chatbot-plugin">
+    <img id="chatbot-icon" src="https://i.ibb.co/RDnHkBG/wil-icon.png" alt="wil-icon">
+</div>
+
+<!-- Chatpane (Initially hidden) -->
+<div class="chatpane" id="chatpane">
+    <div class="chatpane-header" id="chatpane-header">
+        WildBot
+    </div>
+    <button id="clear-chat-button" style="background-color: #ff6666;">Clear Chat</button>
+    
+    <!-- Modal for Clear Chat Confirmation -->
+    <div id="confirmation-modal" class="chat-modal" style="display: none;">
+        <div class="chat-modal-content">
+            <div class="chat-modal-header">
+                <span id="close-modal" class="chat-modal-close">&times;</span>
+                <h2>Clear Chat History</h2>
+            </div>
+            <div class="chat-modal-body">
+                <p>Are you sure you want to clear chats?</p>
+            </div>
+            <div class="chat-modal-footer">
+                <button id="confirm-clear" style="background-color: #4CAF50;">Yes</button>
+                <button id="cancel-clear" style="background-color: #f44336;">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chatpane-body" id="chatpane-body">
+        <div id="chat-messages"></div>
+        <div class="chatpane-footer">
+            <input type="text" id="user-input" class="chat-input" placeholder="Type your message...">
+            <button id="send-button" style="background-color: #ffcc00;">Send</button>
+        </div>
+    </div>
+</div>
