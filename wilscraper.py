@@ -26,40 +26,45 @@ def get_facebook_posts():
         print(f"Error {response.status_code}: {response.text}")
         return []
     
+    
 index = None  # Declare index here to ensure it's in the global scope
 
 def job():
-    global LAST_TIMESTAMP
-    documents = []  # This will store Document objects
+    global LAST_TIMESTAMP, index  # Ensure you're using the global index
+    if index is None:
+        index = set()  # Initialize the set if it's the first run
+
+    documents = []  # This will store new Document objects
     posts = get_facebook_posts()
 
     for post in posts:
+        post_id = post["id"]
+        # Skip the post if it's already been processed
+        if post_id in index:
+            continue
+
         created_time_str = post.get("created_time", "")
         created_time = datetime.strptime(created_time_str, '%Y-%m-%dT%H:%M:%S+0000')
 
         if LAST_TIMESTAMP is None or created_time > LAST_TIMESTAMP:
-            post_id = post["id"]
             post_message = post.get("message", "").strip()
-
-            # Convert datetime to string in ISO format
             created_time_iso = created_time.isoformat()
-
-            # Create a Document object for each post
             document = Document(text=post_message, doc_id=post_id, extra_info={'date': created_time_iso})
             documents.append(document)
+            index.add(post_id)  # Add the ID to the set of processed documents
 
     # Update LAST_TIMESTAMP with the timestamp of the latest post processed
-    if posts:
-        latest_time_str = posts[0].get("created_time", "")
-        LAST_TIMESTAMP = datetime.strptime(latest_time_str, '%Y-%m-%dT%H:%M:%S+0000')
+    if documents:
+        LAST_TIMESTAMP = documents[0].extra_info['date']
 
-    # Print each post in a beautified output
+    # Print each new post in a beautified output
     for doc in documents:
         print(f"Document ID: {doc.doc_id}")
         print(f"Date: {doc.extra_info['date']}")
         print("Text:")
         print(doc.text)
         print("\n" + "="*80 + "\n")  # Separator for readability
+
                         
     if __name__ == '__main__':
         job()
